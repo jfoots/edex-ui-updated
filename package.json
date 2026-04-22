@@ -27,6 +27,7 @@
     "postbuild-darwin": "rm -R prebuild-src",
     "postbuild-windows": "rmdir /S /Q prebuild-src",
     "test": "rsync -a --info=progress2 src/ prebuild-src --exclude node_modules && node prebuild-minify.js && cd prebuild-src && npm install && snyk test && cd .. && rm -R prebuild-src",
+    "test:unit": "jest --forceExit",
     "init-file-icons": "git submodule update --init",
     "update-file-icons": "git submodule foreach git pull origin master && node file-icons-generator.js"
   },
@@ -98,13 +99,23 @@
       "deleteAppDataOnUninstall": true
     }
   },
+  "jest": {
+    "testEnvironment": "node",
+    "roots": ["<rootDir>/src/tests"],
+    "modulePaths": ["<rootDir>/src"],
+    "setupFiles": ["<rootDir>/src/tests/jest.setup.js"],
+    "testTimeout": 15000,
+    "clearMocks": true
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
   "dependencies": {
+    "@electron/rebuild": "^4.0.3",
     "clean-css": "5.2.1",
-    "electron": "^12.1.0",
-    "electron-builder": "^22.14.5",
-    "electron-rebuild": "^2.3.5",
+    "electron": "^36.0.0",
+    "electron-builder": "^26.8.1",
     "mime-types": "^2.1.33",
-    "node-abi": "2.30.1",
     "node-json-minify": "1.0.0",
     "terser": "^5.9.0"
   },

@@ -3,11 +3,11 @@ class Terminal {
         if (opts.role === "client") {
             if (!opts.parentId) throw "Missing options";
 
-            this.xTerm = require("xterm").Terminal;
-            const {AttachAddon} = require("xterm-addon-attach");
-            const {FitAddon} = require("xterm-addon-fit");
-            const {LigaturesAddon} = require("xterm-addon-ligatures");
-            const {WebglAddon} = require("xterm-addon-webgl");
+            this.xTerm = require("@xterm/xterm").Terminal;
+            const {AttachAddon} = require("@xterm/addon-attach");
+            const {FitAddon} = require("@xterm/addon-fit");
+            const {LigaturesAddon} = require("@xterm/addon-ligatures");
+            const {WebglAddon} = require("@xterm/addon-webgl");
             this.Ipc = require("electron").ipcRenderer;
 
             this.port = opts.port || 3000;
@@ -293,7 +293,7 @@ class Terminal {
                     this.clipboard.didCopy = true;
                 },
                 paste: () => {
-                    this.write(remote.clipboard.readText());
+                    this.write(require("@electron/remote").clipboard.readText());
                     this.clipboard.didCopy = false;
                 },
                 didCopy: false
@@ -311,7 +311,7 @@ class Terminal {
             this._closed = false;
             this.onclosed = () => {};
             this.onopened = () => {};
-            this.onresize = () => {};
+            this.onresized = () => {};
             this.ondisconnected = () => {};
 
             this._disableCWDtracking = false;
@@ -429,6 +429,9 @@ class Terminal {
                         return true;
                     }
                 }
+            });
+            this.wss.on("error", e => {
+                if (!this._closed) console.error(`[eDEX] WebSocket server error on port ${this.port}:`, e.message);
             });
             this.Ipc.on("terminal_channel-"+this.port, (e, ...args) => {
                 switch(args[0]) {

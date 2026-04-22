@@ -192,14 +192,12 @@ function createWindow(settings) {
         backgroundColor: '#000000',
         webPreferences: {
             devTools: true,
-	    enableRemoteModule: true,
             contextIsolation: false,
             backgroundThrottling: false,
             webSecurity: true,
             nodeIntegration: true,
             nodeIntegrationInSubFrames: false,
-            allowRunningInsecureContent: false,
-            experimentalFeatures: settings.experimentalFeatures || false
+            allowRunningInsecureContent: false
         }
     });
 
@@ -210,6 +208,7 @@ function createWindow(settings) {
     }));
 
     signale.complete("Frontend window created!");
+    require('@electron/remote/main').enable(win.webContents);
     win.show();
     if (!settings.allowWindowed) {
         win.setResizable(false);
@@ -348,9 +347,9 @@ app.on('ready', async () => {
 
 app.on('web-contents-created', (e, contents) => {
     // Prevent creating more than one window
-    contents.on('new-window', (e, url) => {
-        e.preventDefault();
+    contents.setWindowOpenHandler(({ url }) => {
         shell.openExternal(url);
+        return { action: 'deny' };
     });
 
     // Prevent loading something else than the UI
