@@ -38,7 +38,7 @@ It might or might not be a joke taken too seriously.
 ---
 
 <p align="center">
-  <em>Jump to: <br><a href="#features">Features</a> — <a href="#screenshots">Screenshots</a> — <a href="#qa">Questions & Answers</a> — <strong><a href="#how-do-i-get-it">Download</a></strong> — <a href="#featured-in">Featured In</a> — <a href="#useful-commands-for-the-nerds">Contributor Instructions</a> — <a href="#credits">Credits</a></em>
+  <em>Jump to: <br><a href="#features">Features</a> — <a href="#screenshots">Screenshots</a> — <a href="#qa">Questions & Answers</a> — <strong><a href="#install-instructions">Install Instructions</a></strong> — <a href="#featured-in">Featured In</a> — <a href="#useful-commands-for-the-nerds">Contributor Instructions</a> — <a href="#credits">Credits</a></em>
 </p>
 
 ## Sponsor
@@ -117,6 +117,82 @@ Thanks! If you feel like it, you can [follow me on Twitter](https://gaby.dev/twi
 - [The Geek Freaks (Youtube/German)](https://youtu.be/TSjMIeLG0Sk)
 - [JSNation Open Source Awards 2021](https://osawards.com/javascript/#nominees) (Nominee - Fun Side Project of the Year)
 
+
+## Install Instructions
+
+This fork is installed from source — no pre-packaged release binaries are provided.
+
+### Prerequisites
+
+| Requirement | Notes |
+|---|---|
+| **Node.js 18+** | [nodejs.org](https://nodejs.org) — v22 recommended |
+| **npm** | Comes with Node.js |
+| **C++ compiler** | Required to compile `node-pty` against Electron |
+
+Installing the C++ compiler:
+
+```bash
+# Fedora / RHEL
+sudo dnf install gcc-c++ make
+
+# Ubuntu / Debian
+sudo apt install build-essential
+
+# macOS
+xcode-select --install
+```
+
+### Install & run
+
+```bash
+# 1. Clone the repo
+git clone git@github.com:jfoots/edex-ui-updated.git
+cd edex-ui-updated
+
+# 2. Install root build tools (Electron, electron-builder, etc.)
+npm install
+
+# 3. Install app dependencies (xterm, ws, systeminformation, etc.)
+#    --ignore-scripts skips node-pty's premature native build
+cd src && npm install --ignore-scripts && cd ..
+
+# 4. Rebuild node-pty against Electron's Node.js runtime
+./node_modules/.bin/electron-rebuild -f -w node-pty --module-dir src
+
+# 5. Run
+npm start
+```
+
+Steps 2–4 as a single command:
+```bash
+npm install && cd src && npm install --ignore-scripts && cd .. && ./node_modules/.bin/electron-rebuild -f -w node-pty --module-dir src
+```
+
+### Run the test suite
+
+```bash
+npm run test:unit
+```
+
+### Build a distributable
+
+Note: you can only build for your host OS.
+
+```bash
+# Linux (AppImage)
+npm run prebuild-linux && npm run build-linux
+
+# macOS (DMG)
+npm run prebuild-darwin && npm run build-darwin
+
+# Windows (NSIS installer)
+npm run prebuild-windows && npm run build-windows
+```
+
+Output is written to the `dist/` folder.
+
+---
 
 ## Useful commands for the nerds
 
